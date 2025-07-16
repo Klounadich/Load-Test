@@ -4,6 +4,10 @@ from locust.env import Environment
 from locust.stats import stats_printer, stats_history
 from locust.log import setup_logging
 import gevent
+import random
+import string
+charactres = string.ascii_letters 
+passs = string.digits
 
 class DOSAttackUser(HttpUser):
     wait_time = constant(1)
@@ -13,9 +17,13 @@ class DOSAttackUser(HttpUser):
     
     @task
     def send_request(self):
+        randomUsername = ''.join(random.choice(charactres) for i in range(10))
+        randomPassword=''.join(random.choice(passs)  for i in range(10))
+        randomEmail = randomUsername + "@mail.ru"
         response = self.client.post(
             self.target_path,
-            json={"UserName": "TestUser123", "Password": "123321Nik"}
+            #json={"UserName": "TestUser123", "Password": "1233211Nik"} -- авториз
+            json={"UserName": randomUsername ,"Email": randomEmail , "Password":randomPassword}
         )
         response_json = response.json()
         print(f"Status: {response.status_code} | Time: {response.elapsed.total_seconds():.2f}s |Answer: {response_json}")
